@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic User Form</title>
+    <style>
+        .address-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Create User</h2>
+
+<form id="userForm" enctype="multipart/form-data">
+
+    <input type="text" name="Username" placeholder="Username"><br><br>
+    <input type="password" name="Password" placeholder="Password"><br><br>
+    <input type="email" name="Email" placeholder="Email"><br><br>
+    <input type="text" name="PhoneNumber" placeholder="Phone"><br><br>
+    <input type="text" name="Gender" placeholder="Gender"><br><br>
+    <input type="number" name="Balance" placeholder="Balance"><br><br>
+    <input type="text" name="RoleId" placeholder="RoleId"><br><br>
+
+    <input type="file" name="ProfileImage"><br><br>
+
+    <hr>
+
+    <h3>Addresses</h3>
+    <div id="addressContainer"></div>
+
+    <button type="button" onclick="addAddress()">+ Add Address</button>
+
+    <br><br>
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    let addressIndex = 0;
+    
+    function addAddress() {
+      const container = document.getElementById("addressContainer");
+    
+      const html = `
+        <div class="address-box">
+          <input name="Addresses[${addressIndex}].Province" placeholder="Province"><br>
+          <input name="Addresses[${addressIndex}].City" placeholder="City"><br>
+          <input name="Addresses[${addressIndex}].District" placeholder="District"><br>
+          <input name="Addresses[${addressIndex}].ZipCode" placeholder="ZipCode"><br>
+          <input name="Addresses[${addressIndex}].Street" placeholder="Street"><br>
+          <button type="button" onclick="this.parentElement.remove()">Remove</button>
+        </div>
+      `;
+    
+      container.insertAdjacentHTML("beforeend", html);
+      addressIndex++;
+    }
+    
+    document.getElementById("userForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+    
+      const formData = new FormData(this);
+    
+      const res = await fetch("http://localhost:5197/api/User", {
+        method: "POST",
+        body: formData
+      });
+    
+      const data = await res.json();
+      console.log(data);
+    });
+</script>
+
+</body>
+</html>

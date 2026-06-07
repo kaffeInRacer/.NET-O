@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "mssql": {
+      "command": "uvx",
+      "args": ["--from", "microsoft-sql-server-mcp", "mssql_mcp_server"],
+      "env": {
+        "MSSQL_SERVER": "localhost",
+        "MSSQL_DATABASE": "shooper_db",
+        "MSSQL_USER": "sa",
+        "MSSQL_PASSWORD": "YourStrong@Passw0rd",
+        "MSSQL_PORT": "1433",
+        "MSSQL_ENCRYPT": "false"
+      }
+    }
+  }
+}
