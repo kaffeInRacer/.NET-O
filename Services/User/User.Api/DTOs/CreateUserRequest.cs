@@ -24,12 +24,3 @@ public class CreateUserRequest
     [FromForm(Name = "address")]
     public List<CreateAddressRequest> Addresses { get; set; } = new();
 }
-
-public class CreateAddressRequest
-{
-    public string Province { get; set; } = string.Empty;
-    public string City     { get; set; } = string.Empty;
-    public string District { get; set; } = string.Empty;
-    public string ZipCode  { get; set; } = string.Empty;
-    public string Street   { get; set; } = string.Empty;
-}

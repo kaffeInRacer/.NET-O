@@ -12,8 +12,8 @@ using User.Infrastructure.Persistence;
 namespace User.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260605185218_UserSeeder")]
-    partial class UserSeeder
+    [Migration("20260608160549_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,26 +32,11 @@ namespace User.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("city");
-
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("District")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("district");
-
-                    b.Property<string>("Province")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("province");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -60,7 +45,9 @@ namespace User.Infrastructure.Persistence.Migrations
                         .HasColumnName("street");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("datetime")
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -68,11 +55,11 @@ namespace User.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(36)")
                         .HasColumnName("user_id");
 
-                    b.Property<string>("ZipCode")
+                    b.Property<string>("VillageId")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("zipcode");
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
+                        .HasColumnName("village_id");
 
                     b.HasKey("Id");
 
@@ -230,22 +217,6 @@ namespace User.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "019e90e3-5c8a-7d3f-a7b6-802a4bbf19fa",
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Admin Roles Action",
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = "019e90e3-5c8b-7473-a13e-84d963bf804c",
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "User Roles Action",
-                            Name = "User"
-                        });
                 });
 
             modelBuilder.Entity("User.Domain.RolePermission", b =>
@@ -366,32 +337,6 @@ namespace User.Infrastructure.Persistence.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("users", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "019e90e4-1a2b-7c3d-8e9f-123456789abc",
-                            Balance = 0m,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@shooper.com",
-                            Gender = "male",
-                            Password = "$2a$11$PULmazE419kkQjXFnlxpe..e65i7OXe3a9Ms8Ap/8Ek6LgrbS8BXK",
-                            PhoneNumber = "08123456789",
-                            RoleId = "019e90e3-5c8a-7d3f-a7b6-802a4bbf19fa",
-                            Username = "Admin"
-                        },
-                        new
-                        {
-                            Id = "019e90e3-5c8b-7d58-b353-d0bc9b984fce",
-                            Balance = 0m,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "user@shooper.com",
-                            Gender = "male",
-                            Password = "$2a$11$qulLbL/OUWKfbsO0F0f2ZeIOw9oxTUt9FK6jWnVPOYO6BGK3KKHBq",
-                            PhoneNumber = "08987654321",
-                            RoleId = "019e90e3-5c8b-7473-a13e-84d963bf804c",
-                            Username = "User"
-                        });
                 });
 
             modelBuilder.Entity("User.Domain.Addresses", b =>

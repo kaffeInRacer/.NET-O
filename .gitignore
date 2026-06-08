@@ -17,9 +17,10 @@ ScaffoldingReadMe.txt
 .venv/
 *.user
 *.suo
+*.sql
 *.userosscache
 *.sln.docstates
-
+.mcp.json
 appsettings.Development.json
 
 *.log

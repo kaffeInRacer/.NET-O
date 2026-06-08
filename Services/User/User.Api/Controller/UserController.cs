@@ -15,4 +15,28 @@ public class UserController : ControllerBase
       return Ok(request);
    }
 
+   [HttpPut("{id}")]
+   [Consumes("multipart/form-data")]
+   public async Task<IActionResult> Update(string id, [FromForm] UpdateUserRequest request)
+   {
+      return Ok(ApiResponse<object>.Success(new
+      {
+         Id = id,
+         request.Username,
+         request.Password,
+         request.Email,
+         request.PhoneNumber,
+         request.Gender,
+         ProfileImage = request.ProfileImage is not null
+            ? new { request.ProfileImage.FileName, request.ProfileImage.ContentType, request.ProfileImage.Length }
+            : null,
+         Addresses = request.Addresses.Select(a => new
+         {
+            a.Id,
+            a.VillageId,
+            a.Street
+         })
+      }));
+   }
+
 }

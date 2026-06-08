@@ -9,7 +9,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Addresses>
     public void Configure(EntityTypeBuilder<Addresses> builder)
     {
         builder.ToTable("addresses");
-        
+
         builder.HasKey(a => a.Id);
 
         builder.Property(a => a.Id)
@@ -22,33 +22,26 @@ public class AddressConfiguration : IEntityTypeConfiguration<Addresses>
             .HasMaxLength(36)
             .HasColumnName("user_id");
 
-        builder.Property(a => a.Province)
+        builder.Property(a => a.VillageId)
             .IsRequired()
-            .HasMaxLength(100)
-            .HasColumnName("province");
-
-        builder.Property(a => a.City)
-            .IsRequired()
-            .HasMaxLength(100)
-            .HasColumnName("city");
-
-        builder.Property(a => a.District)
-            .IsRequired()
-            .HasMaxLength(100)
-            .HasColumnName("district");
-
-        builder.Property(a => a.ZipCode)
-            .IsRequired()
-            .HasMaxLength(10)
-            .HasColumnName("zipcode");
+            .HasMaxLength(36)
+            .HasColumnName("village_id");
 
         builder.Property(a => a.Street)
             .IsRequired()
             .HasMaxLength(500)
             .HasColumnName("street");
 
-        // Address -> User (Many-to-One)
-        // Cascade delete: when user is deleted, all addresses are deleted
+        builder.Property(a => a.CreatedAt)
+            .HasColumnType("datetime")
+            .HasColumnName("created_at")
+            .HasDefaultValueSql("(getdate())");
+
+        builder.Property(a => a.UpdatedAt)
+            .HasColumnType("datetime")
+            .HasColumnName("updated_at")
+            .ValueGeneratedOnUpdate();
+
         builder.HasOne(a => a.User)
             .WithMany(u => u.Addresses)
             .HasForeignKey(a => a.UserId)

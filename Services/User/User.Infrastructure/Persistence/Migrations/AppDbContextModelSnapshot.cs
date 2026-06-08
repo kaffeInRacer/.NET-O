@@ -29,26 +29,11 @@ namespace User.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(36)")
                         .HasColumnName("id");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("city");
-
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("District")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("district");
-
-                    b.Property<string>("Province")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("province");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -57,7 +42,9 @@ namespace User.Infrastructure.Persistence.Migrations
                         .HasColumnName("street");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("datetime")
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -65,11 +52,11 @@ namespace User.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(36)")
                         .HasColumnName("user_id");
 
-                    b.Property<string>("ZipCode")
+                    b.Property<string>("VillageId")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("zipcode");
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)")
+                        .HasColumnName("village_id");
 
                     b.HasKey("Id");
 

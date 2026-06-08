@@ -106,13 +106,10 @@ namespace User.Infrastructure.Persistence.Migrations
                 {
                     id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     user_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
-                    province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    city = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    district = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    zipcode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    village_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     street = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
+                    updated_at = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
