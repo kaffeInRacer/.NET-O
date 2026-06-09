@@ -21,41 +21,39 @@ public class S3StorageService : IS3StorageService
             .Build();
     }
 
-    private async Task EnsureBucketExistsAsync()
+    public async Task InitializeAsync()
     {
         var exists = await _minioClient.BucketExistsAsync(
             new BucketExistsArgs().WithBucket(_options.BucketName));
 
-        if (!exists)
+        if (exists) return;
+
+        await _minioClient.MakeBucketAsync(
+            new MakeBucketArgs().WithBucket(_options.BucketName));
+
+        var policy = $$"""
         {
-            await _minioClient.MakeBucketAsync(
-                new MakeBucketArgs().WithBucket(_options.BucketName));
-
-            var policy = $$"""
-            {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Effect": "Allow",
-                        "Principal": "*",
-                        "Action": "s3:GetObject",
-                        "Resource": "arn:aws:s3:::{{_options.BucketName}}/*"
-                    }
-                ]
-            }
-            """;
-
-            await _minioClient.SetPolicyAsync(new SetPolicyArgs()
-                .WithBucket(_options.BucketName)
-                .WithPolicy(policy));
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": "s3:GetObject",
+                    "Resource": "arn:aws:s3:::{{_options.BucketName}}/*"
+                }
+            ]
         }
+        """;
+
+        await _minioClient.SetPolicyAsync(new SetPolicyArgs()
+            .WithBucket(_options.BucketName)
+            .WithPolicy(policy));
     }
 
     public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType)
     {
-        await EnsureBucketExistsAsync();
-
-        var key = $"{Guid.NewGuid()}_{fileName}";
+        var ext = Path.GetExtension(fileName);
+        var key = $"{Guid.NewGuid()}{ext}";
 
         await _minioClient.PutObjectAsync(new PutObjectArgs()
             .WithBucket(_options.BucketName)
@@ -64,7 +62,7 @@ public class S3StorageService : IS3StorageService
             .WithObjectSize(fileStream.Length)
             .WithContentType(contentType));
 
-        return $"http://{_options.ServiceUrl}:{_options.Port}/{_options.BucketName}/{key}";
+        return $"{_options.BucketName}/{key}";
     }
 
     public async Task DeleteAsync(string fileKey)
@@ -79,7 +77,7 @@ public class S3StorageService : IS3StorageService
         var url = await _minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
             .WithBucket(_options.BucketName)
             .WithObject(fileKey)
-            .WithExpiry(60 * 60 * 24)); // 24 hours
+            .WithExpiry(60 * 60 * 24));
 
         return url;
     }

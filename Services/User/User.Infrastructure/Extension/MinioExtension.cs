@@ -9,9 +9,9 @@ public static class MinIOExtension
 {
     public static IServiceCollection AddMinIO(this IServiceCollection services, IConfiguration configuration)
     {
-        var section = configuration.GetSection("MinIO");
-        services.Configure<S3StorageOptions>(section);
-        services.AddScoped<IS3StorageService, S3StorageService>();
+        services.Configure<S3StorageOptions>(options => configuration.GetSection("MinIO").Bind(options));
+        services.AddSingleton<IS3StorageService, S3StorageService>();
+        services.AddHostedService<MinioInitializerService>();
         return services;
     }
 }

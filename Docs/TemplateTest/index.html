@@ -16,15 +16,14 @@
 
 <form id="userForm" enctype="multipart/form-data">
 
-    <input type="text" name="Username" placeholder="Username"><br><br>
-    <input type="password" name="Password" placeholder="Password"><br><br>
-    <input type="email" name="Email" placeholder="Email"><br><br>
-    <input type="text" name="PhoneNumber" placeholder="Phone"><br><br>
-    <input type="text" name="Gender" placeholder="Gender"><br><br>
-    <input type="number" name="Balance" placeholder="Balance"><br><br>
-    <input type="text" name="RoleId" placeholder="RoleId"><br><br>
-
-    <input type="file" name="ProfileImage"><br><br>
+    <input type="text" name="username" placeholder="Username"><br><br>
+    <input type="password" name="password" placeholder="Password"><br><br>
+    <input type="email" name="email" placeholder="Email"><br><br>
+    <input type="text" name="phone_number" placeholder="Phone"><br><br>
+    <input type="text" name="gender" placeholder="Gender"><br><br>
+    <input type="number" name="balance" placeholder="Balance"><br><br>
+    <input type="text" name="role_id" placeholder="RoleId"><br><br>
+    <input type="file" name="image"><br><br>
 
     <hr>
 
@@ -37,6 +36,8 @@
     <button type="submit">Submit</button>
 </form>
 
+<pre id="response" style="background:#f4f4f4;padding:10px;margin-top:20px;"></pre>
+
 <script>
     let addressIndex = 0;
     
@@ -45,11 +46,8 @@
     
       const html = `
         <div class="address-box">
-          <input name="Addresses[${addressIndex}].Province" placeholder="Province"><br>
-          <input name="Addresses[${addressIndex}].City" placeholder="City"><br>
-          <input name="Addresses[${addressIndex}].District" placeholder="District"><br>
-          <input name="Addresses[${addressIndex}].ZipCode" placeholder="ZipCode"><br>
-          <input name="Addresses[${addressIndex}].Street" placeholder="Street"><br>
+          <input name="address[${addressIndex}].village_id" placeholder="Village ID"><br>
+          <input name="address[${addressIndex}].street"    placeholder="Street / Alamat Lengkap"><br>
           <button type="button" onclick="this.parentElement.remove()">Remove</button>
         </div>
       `;
@@ -69,7 +67,7 @@
       });
     
       const data = await res.json();
-      console.log(data);
+      document.getElementById('response').textContent = JSON.stringify(data, null, 2);
     });
 </script>
 
