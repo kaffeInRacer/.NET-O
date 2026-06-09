@@ -1,28 +1,31 @@
 using Serilog;
-using User.Application.Options;
 using User.Infrastructure.Extension;
 using Infrastructure.Logger.Extension;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using User.Application.Interfaces.IUseCase;
+using User.Application.Interfaces.IRepository;
+using User.Application.UseCase;
+using User.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSerilog();
-
-builder.Services.Configure<DeviceLimitOptions>(builder.Configuration.GetSection("DeviceLimit"));
-builder.Services.AddDatabase(builder.Configuration);
-builder.Services.AddMinIO(builder.Configuration);
 builder.Services.AddCors(opts =>
 {
     opts.AddPolicy("CorsPolicy",
         policy  =>
         {
             policy.WithOrigins("*");
-            policy.WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+            policy.WithMethods("GET", "POST", "PUT", "DELETE");
             policy.WithHeaders("Access-Control-Allow-Origin");
         });
 });
+builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddMinIO(builder.Configuration);
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserUseCase, UserUseCase>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -43,7 +46,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
 app.MapControllers();
 app.Lifetime.ApplicationStarted.Register(() =>
