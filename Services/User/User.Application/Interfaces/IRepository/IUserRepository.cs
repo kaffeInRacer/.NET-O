@@ -7,5 +7,6 @@ public interface IUserRepository
     Task<Domain.User?> GetUserByEmailAsync(string email);
     Task<List<Domain.User>> ListUsersAsync();
     Task<bool> UpdateUserAsync(Domain.User user);
+    Task UpdateAddressesAsync(string userId, List<Domain.Addresses> addresses);
     Task<bool> DeleteUserAsync(Domain.User userId);
 }
