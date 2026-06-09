@@ -49,34 +49,38 @@ public class UserRepository : IUserRepository
 
     public async Task UpdateAddressesAsync(string userId, List<Domain.Addresses> addresses)
     {
-        var existingInDb = await _dbContext.Addresses
-            .Where(a => a.UserId == userId)
+        var existing = await _dbContext.Addresses
+            .Where(x => x.UserId == userId)
             .ToListAsync();
 
-        var existingIds = existingInDb.Select(a => a.Id).ToHashSet();
-        var incomingIds = addresses.Select(a => a.Id).ToHashSet();
+        var existingMap = existing.ToDictionary(x => x.Id);
+        var incomingIds = addresses.Select(x => x.Id).ToHashSet();
 
-        // DELETE: ada di DB tapi tidak di incoming
-        var toDelete = existingInDb.Where(a => !incomingIds.Contains(a.Id)).ToList();
+        // DELETE
+        var toDelete = existing
+            .Where(x => !incomingIds.Contains(x.Id));
+
         _dbContext.Addresses.RemoveRange(toDelete);
 
-        foreach (var incoming in addresses)
+        // UPSERT
+        foreach (var item in addresses)
         {
-            if (existingIds.Contains(incoming.Id))
+            if (existingMap.TryGetValue(item.Id, out var db))
             {
-                // UPDATE: id dikenal di DB
-                var target = existingInDb.First(a => a.Id == incoming.Id);
-                target.VillageId = incoming.VillageId;
-                target.Street    = incoming.Street;
-                target.UpdatedAt = DateTime.UtcNow;
+                db.VillageId = item.VillageId;
+                db.Street = item.Street;
+                db.UpdatedAt = DateTime.UtcNow;
+                continue;
             }
-            else if (!string.IsNullOrWhiteSpace(incoming.VillageId) && !string.IsNullOrWhiteSpace(incoming.Street))
-            {
-                // INSERT: id tidak dikenal di DB + field tidak kosong
-                incoming.UserId    = userId;
-                incoming.CreatedAt = DateTime.UtcNow;
-                await _dbContext.Addresses.AddAsync(incoming);
-            }
+
+            if (string.IsNullOrWhiteSpace(item.VillageId) ||
+                string.IsNullOrWhiteSpace(item.Street))
+                continue;
+
+            item.UserId = userId;
+            item.CreatedAt = DateTime.UtcNow;
+
+            _dbContext.Addresses.Add(item);
         }
 
         await _dbContext.SaveChangesAsync();
